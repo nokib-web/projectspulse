@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser } from '@/lib/auth'
 import prisma from '@/lib/db'
-import { recalcHealthScore } from '@/lib/helpers'
+import { recalcHealthScore } from '@/lib/healthScore'
 
 export async function GET(
     req: NextRequest,
@@ -38,7 +38,7 @@ export async function GET(
             authUser.role === 'ADMIN' ||
             project.adminId === authUser.id ||
             project.clientId === authUser.id ||
-            project.employees.some(pe => pe.employeeId === authUser.id)
+            project.employees.some((pe: any) => pe.employeeId === authUser.id)
 
         if (!hasAccess) {
             return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })

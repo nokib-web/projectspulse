@@ -53,7 +53,7 @@ export async function GET(
             authUser.role === 'ADMIN' ||
             project.adminId === authUser.id ||
             project.clientId === authUser.id ||
-            project.employees.some(pe => pe.employeeId === authUser.id)
+            project.employees.some((pe: any) => pe.employeeId === authUser.id)
 
         if (!hasAccess) {
             return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })

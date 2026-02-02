@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser } from '@/lib/auth'
 import prisma from '@/lib/db'
-import { getCurrentWeekAndYear, recalcHealthScore } from '@/lib/helpers'
+import { getCurrentWeekAndYear } from '@/lib/helpers'
+import { recalcHealthScore } from '@/lib/healthScore'
 
 export async function GET(
     req: NextRequest,

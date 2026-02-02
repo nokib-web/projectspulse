@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser } from '@/lib/auth'
 import prisma from '@/lib/db'
-import { recalcHealthScore } from '@/lib/helpers'
+import { recalcHealthScore } from '@/lib/healthScore'
 
 export async function PUT(
     req: NextRequest,
