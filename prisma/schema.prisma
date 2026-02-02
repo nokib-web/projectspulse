@@ -5,3 +5,219 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+// ────────────────────────────────────────
+// ENUMS
+// ────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+  CLIENT
+}
+
+enum ProjectStatus {
+  ON_TRACK
+  AT_RISK
+  CRITICAL
+  COMPLETED
+}
+
+enum RiskSeverity {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum RiskStatus {
+  OPEN
+  RESOLVED
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+}
+
+enum ActivityType {
+  CHECK_IN_SUBMITTED
+  FEEDBACK_SUBMITTED
+  RISK_CREATED
+  RISK_RESOLVED
+  PROJECT_STATUS_CHANGED
+  MILESTONE_UPDATED
+  PROJECT_CREATED
+}
+
+// ────────────────────────────────────────
+// MODELS
+// ────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(EMPLOYEE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  managedProjects  Project[]         @relation("AdminProjects")
+  employeeProjects ProjectEmployee[]
+  clientProjects   Project[]         @relation("ClientProjects")
+  checkIns         EmployeeCheckIn[]
+  feedbacks        ClientFeedback[]
+  risks            Risk[]
+  notifications    Notification[]
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  status      ProjectStatus @default(ON_TRACK)
+  healthScore Int           @default(100)
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  adminId  String
+  admin    User    @relation("AdminProjects", fields: [adminId], references: [id])
+  clientId String?
+  client   User?   @relation("ClientProjects", fields: [clientId], references: [id])
+
+  employees  ProjectEmployee[]
+  checkIns   EmployeeCheckIn[]
+  feedbacks  ClientFeedback[]
+  risks      Risk[]
+  milestones Milestone[]
+  activities ActivityLog[]
+
+  @@index([adminId])
+  @@index([clientId])
+  @@index([status])
+}
+
+model ProjectEmployee {
+  id         String   @id @default(cuid())
+  projectId  String
+  employeeId String
+  assignedAt DateTime @default(now())
+
+  // Relations
+  project  Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  employee User    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, employeeId])
+}
+
+model EmployeeCheckIn {
+  id                String   @id @default(cuid())
+  projectId         String
+  employeeId        String
+  weekNumber        Int
+  year              Int
+  progressSummary   String
+  blockers          String?
+  confidenceLevel   Int
+  completionPercent Int
+  createdAt         DateTime @default(now())
+
+  // Relations
+  project  Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  employee User    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, employeeId, weekNumber, year])
+  @@index([projectId, year, weekNumber])
+}
+
+model ClientFeedback {
+  id                   String   @id @default(cuid())
+  projectId            String
+  clientId             String
+  weekNumber           Int
+  year                 Int
+  satisfactionRating   Int
+  communicationClarity Int
+  comments             String?
+  flaggedIssue         Boolean  @default(false)
+  createdAt            DateTime @default(now())
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  client  User    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, clientId, weekNumber, year])
+  @@index([projectId, year, weekNumber])
+}
+
+model Risk {
+  id             String       @id @default(cuid())
+  projectId      String
+  createdById    String
+  title          String
+  description    String?
+  severity       RiskSeverity @default(MEDIUM)
+  status         RiskStatus   @default(OPEN)
+  mitigationPlan String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  resolvedAt     DateTime?
+
+  // Relations
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy User    @relation(fields: [createdById], references: [id])
+
+  @@index([projectId, status, severity])
+}
+
+model Milestone {
+  id          String          @id @default(cuid())
+  projectId   String
+  title       String
+  description String?
+  dueDate     DateTime
+  status      MilestoneStatus @default(PENDING)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id          String       @id @default(cuid())
+  projectId   String
+  userId      String?
+  type        ActivityType
+  title       String
+  description String?
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  type      String
+  link      String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+}
