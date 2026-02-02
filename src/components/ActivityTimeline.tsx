@@ -1,14 +1,15 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
-    CheckCircle2,
-    MessageSquare,
-    AlertTriangle,
-    RefreshCcw,
+    CheckCircle,
+    MessageCircle,
+    AlertOctagon,
+    ShieldCheck,
+    RefreshCw,
     Flag,
-    Calendar,
-    PlusCircle
+    Plus,
+    Calendar
 } from 'lucide-react'
 
 interface Activity {
@@ -17,85 +18,136 @@ interface Activity {
     title: string
     description?: string | null
     createdAt: string
-    user?: {
-        name: string
-    } | null
+    userId?: string
 }
 
 interface ActivityTimelineProps {
-    activities: Activity[]
+    projectId: string
 }
 
-const ActivityTimeline: React.FC<ActivityTimelineProps> = ({ activities }) => {
+const formatRelativeTime = (date: string | Date) => {
+    const now = new Date()
+    const then = new Date(date)
+    const diffInSeconds = Math.floor((now.getTime() - then.getTime()) / 1000)
+
+    if (diffInSeconds < 60) return 'Just now'
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`
+    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} days ago`
+    if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)} months ago`
+    return `${Math.floor(diffInSeconds / 31536000)} years ago`
+}
+
+const ActivityTimeline: React.FC<ActivityTimelineProps> = ({ projectId }) => {
+    const [activities, setActivities] = useState<Activity[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchActivities = async () => {
+            try {
+                const res = await fetch(`/api/projects/${projectId}/activity`)
+                const result = await res.json()
+                if (result.success) {
+                    setActivities(result.data)
+                }
+            } catch (error) {
+                console.error('Failed to fetch activities:', error)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchActivities()
+    }, [projectId])
+
     const getIcon = (type: string) => {
         switch (type) {
             case 'CHECK_IN_SUBMITTED':
-                return <CheckCircle2 className="w-5 h-5 text-indigo-500" />
+                return <CheckCircle className="w-5 h-5 text-green-500" />
             case 'FEEDBACK_SUBMITTED':
-                return <MessageSquare className="w-5 h-5 text-blue-500" />
+                return <MessageCircle className="w-5 h-5 text-blue-500" />
             case 'RISK_CREATED':
-                return <AlertTriangle className="w-5 h-5 text-red-500" />
+                return <AlertOctagon className="w-5 h-5 text-orange-500" />
             case 'RISK_RESOLVED':
-                return <CheckCircle2 className="w-5 h-5 text-green-500" />
+                return <ShieldCheck className="w-5 h-5 text-green-500" />
             case 'PROJECT_STATUS_CHANGED':
-                return <RefreshCcw className="w-5 h-5 text-amber-500" />
+                return <RefreshCw className="w-5 h-5 text-indigo-500" />
             case 'MILESTONE_UPDATED':
                 return <Flag className="w-5 h-5 text-purple-500" />
             case 'PROJECT_CREATED':
-                return <PlusCircle className="w-5 h-5 text-emerald-500" />
+                return <Plus className="w-5 h-5 text-indigo-500" />
             default:
                 return <Calendar className="w-5 h-5 text-gray-400" />
         }
     }
 
+    if (loading) {
+        return (
+            <div className="space-y-6">
+                {[1, 2, 3].map((i) => (
+                    <div key={i} className="flex gap-4 animate-pulse">
+                        <div className="flex flex-col items-center">
+                            <div className="w-[10px] h-[10px] rounded-full bg-gray-200 border-2 border-gray-300" />
+                            <div className="w-px h-full bg-gray-200" />
+                        </div>
+                        <div className="flex-1 bg-gray-100 h-24 rounded-lg border border-gray-200" />
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
     if (activities.length === 0) {
         return (
-            <div className="py-12 text-center text-gray-500 font-medium">
-                No recent activity found.
+            <div className="py-12 text-center bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <div className="bg-indigo-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Calendar className="w-8 h-8 text-indigo-400" />
+                </div>
+                <p className="text-gray-500 font-medium px-6">
+                    No activity yet. Check-ins, feedback, and risk updates will appear here.
+                </p>
             </div>
         )
     }
 
     return (
-        <div className="flow-root">
-            <ul className="-mb-8">
-                {activities.map((activity, idx) => (
-                    <li key={activity.id}>
-                        <div className="relative pb-8">
-                            {idx !== activities.length - 1 && (
-                                <span className="absolute left-5 top-5 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-800" aria-hidden="true" />
-                            )}
-                            <div className="relative flex items-start space-x-3">
-                                <div className="relative">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm ring-8 ring-white dark:ring-gray-950">
-                                        {getIcon(activity.type)}
-                                    </div>
-                                </div>
-                                <div className="min-w-0 flex-1 py-1.5">
-                                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                                        <span className="font-semibold text-gray-900 dark:text-white mr-2">
+        <div className="relative">
+            {/* Vertical line - 1px indigo-200 */}
+            <div className="absolute left-[4.5px] top-3 bottom-0 w-px bg-indigo-200" />
+
+            <div className="space-y-6">
+                {activities.map((activity, index) => (
+                    <div key={activity.id} className="relative flex gap-4 md:gap-6 group">
+                        {/* Timeline Dot - 10px circle, indigo-600 border, white fill */}
+                        <div className="flex flex-col items-center pt-[11px] relative z-10">
+                            <div className="w-[10px] h-[10px] flex-shrink-0 rounded-full bg-white border-2 border-indigo-600 shadow-sm" />
+                        </div>
+
+                        {/* Activity Card - alternating bg white/gray-50 */}
+                        <div className={`flex-1 border border-gray-200 rounded-lg p-4 shadow-sm transition-all hover:border-indigo-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                            }`}>
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                                <div className="flex items-start gap-3">
+                                    <div className="mt-0.5 flex-shrink-0">{getIcon(activity.type)}</div>
+                                    <div className="min-w-0">
+                                        <h4 className="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
                                             {activity.title}
-                                        </span>
-                                        {activity.user?.name && (
-                                            <span className="inline-flex items-center text-gray-600 dark:text-gray-300">
-                                                by {activity.user.name}
-                                            </span>
+                                        </h4>
+                                        {activity.description && (
+                                            <p className="mt-1 text-xs text-gray-500 leading-relaxed">
+                                                {activity.description}
+                                            </p>
                                         )}
-                                        <span className="ml-2 whitespace-nowrap">
-                                            {new Date(activity.createdAt).toLocaleDateString()} at {new Date(activity.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </span>
                                     </div>
-                                    {activity.description && (
-                                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 leading-relaxed italic bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg border-l-2 border-gray-200 dark:border-gray-700">
-                                            {activity.description}
-                                        </p>
-                                    )}
                                 </div>
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider whitespace-nowrap pt-1 sm:text-right">
+                                    {formatRelativeTime(activity.createdAt)}
+                                </span>
                             </div>
                         </div>
-                    </li>
+                    </div>
                 ))}
-            </ul>
+            </div>
         </div>
     )
 }
