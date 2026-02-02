@@ -1,36 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ProjectPulse
+
+**Project Health & Client Feedback Tracker**
+
+## Overview
+
+ProjectPulse is a comprehensive project management and client feedback tracking system built with Next.js, TypeScript, and Prisma. It enables teams to monitor project health, collect client feedback, and stay on track with real-time insights.
+
+## Tech Stack
+
+- **Frontend**: Next.js 16 (App Router), React, TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: JWT with bcryptjs
+- **UI Components**: Lucide React icons, Recharts for data visualization
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- PostgreSQL database
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo-url>
+cd projectpulse
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+   - Copy `.env.example` to `.env.local`
+   - Update the values with your actual configuration:
+     - `DATABASE_URL`: Your PostgreSQL connection string
+     - `JWT_SECRET`: A secure random string (minimum 32 characters)
+     - `JWT_EXPIRY`: Token expiration time (e.g., "7d")
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Generate Prisma Client:
+```bash
+npx prisma generate
+```
 
-## Learn More
+5. Run the development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+projectpulse/
+├── prisma/
+│   └── schema.prisma          # Database schema
+├── src/
+│   ├── app/                   # Next.js app router pages
+│   │   ├── layout.tsx         # Root layout
+│   │   └── page.tsx           # Landing page
+│   ├── lib/
+│   │   └── db.ts              # Prisma client singleton
+│   └── types/
+│       └── index.ts           # TypeScript type definitions
+├── .env.example               # Environment variables template
+├── .env.local                 # Local environment variables (not committed)
+├── prisma.config.ts           # Prisma 7 configuration
+└── package.json
+```
 
-## Deploy on Vercel
+## Available Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Features (Planned)
+
+- 🔐 User authentication (Admin, Employee, Client roles)
+- 📊 Project health tracking
+- 💬 Client feedback collection
+- 📈 Real-time analytics and reporting
+- 🎯 Risk management
+- 📱 Responsive design
+
+## License
+
+MIT
+
+## Author
+
+Built with ❤️ using Next.js and Prisma
