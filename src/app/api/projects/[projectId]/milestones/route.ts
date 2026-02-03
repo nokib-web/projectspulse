@@ -4,7 +4,7 @@ import prisma from '@/lib/db'
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { projectId: string } }
+    context: { params: Promise<{ projectId: string }> }
 ) {
     const authUser = await getAuthenticatedUser(req)
     if (!authUser) {
@@ -16,7 +16,7 @@ export async function GET(
     }
 
     try {
-        const { projectId } = params
+        const { projectId } = await context.params
 
         // Verify access
         const project = await prisma.project.findUnique({
@@ -34,7 +34,7 @@ export async function GET(
             authUser.role === 'ADMIN' ||
             project.adminId === authUser.id ||
             project.clientId === authUser.id ||
-            project.employees.some(pe => pe.employeeId === authUser.id)
+            project.employees.some((pe: any) => pe.employeeId === authUser.id)
 
         if (!hasAccess) {
             return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
@@ -47,7 +47,7 @@ export async function GET(
 
         // Compute OVERDUE status on-the-fly
         const now = new Date()
-        const milestonesWithStatus = milestones.map(milestone => {
+        const milestonesWithStatus = milestones.map((milestone: any) => {
             let computedStatus = milestone.status
             if (milestone.dueDate < now && milestone.status !== 'COMPLETED') {
                 computedStatus = 'OVERDUE'
@@ -67,7 +67,7 @@ export async function GET(
 
 export async function POST(
     req: NextRequest,
-    { params }: { params: { projectId: string } }
+    context: { params: Promise<{ projectId: string }> }
 ) {
     const authUser = await getAuthenticatedUser(req)
     if (!authUser) {
@@ -84,7 +84,7 @@ export async function POST(
     }
 
     try {
-        const { projectId } = params
+        const { projectId } = await context.params
         const body = await req.json()
         const { title, description, dueDate } = body
 

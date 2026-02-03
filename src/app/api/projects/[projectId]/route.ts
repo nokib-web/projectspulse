@@ -4,7 +4,7 @@ import prisma from '@/lib/db'
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { projectId: string } }
+    context: { params: Promise<{ projectId: string }> }
 ) {
     const authUser = await getAuthenticatedUser(req)
     if (!authUser) {
@@ -16,7 +16,7 @@ export async function GET(
     }
 
     try {
-        const { projectId } = params
+        const { projectId } = await context.params
 
         const project = await prisma.project.findUnique({
             where: { id: projectId },
@@ -39,7 +39,19 @@ export async function GET(
                 },
                 activities: {
                     orderBy: { createdAt: 'desc' },
-                    take: 5
+                    take: 10
+                },
+                checkIns: {
+                    include: {
+                        employee: { select: { id: true, name: true } }
+                    },
+                    orderBy: { createdAt: 'desc' }
+                },
+                feedbacks: {
+                    include: {
+                        client: { select: { id: true, name: true } }
+                    },
+                    orderBy: { createdAt: 'desc' }
                 }
             }
         })
@@ -59,7 +71,14 @@ export async function GET(
             return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
         }
 
-        return NextResponse.json({ success: true, data: project }, { status: 200 })
+        // Map data to match frontend expectations (naming differences)
+        const responseData = {
+            ...project,
+            checkins: project.checkIns,
+            feedback: project.feedbacks
+        }
+
+        return NextResponse.json({ success: true, data: responseData }, { status: 200 })
     } catch (error) {
         console.error('Get project error:', error)
         return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
@@ -68,7 +87,7 @@ export async function GET(
 
 export async function PUT(
     req: NextRequest,
-    { params }: { params: { projectId: string } }
+    context: { params: Promise<{ projectId: string }> }
 ) {
     const authUser = await getAuthenticatedUser(req)
     if (!authUser) {
@@ -85,7 +104,7 @@ export async function PUT(
     }
 
     try {
-        const { projectId } = params
+        const { projectId } = await context.params
         const body = await req.json()
         const { name, description, startDate, endDate, clientId, status } = body
 
@@ -144,7 +163,7 @@ export async function PUT(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { projectId: string } }
+    context: { params: Promise<{ projectId: string }> }
 ) {
     const authUser = await getAuthenticatedUser(req)
     if (!authUser) {
@@ -161,7 +180,7 @@ export async function DELETE(
     }
 
     try {
-        const { projectId } = params
+        const { projectId } = await context.params
 
         await prisma.project.delete({
             where: { id: projectId }

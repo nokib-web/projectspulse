@@ -121,7 +121,7 @@ export default function AdminProjects() {
                             <select
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
-                                className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500"
                             >
                                 <option value="ALL">All Status</option>
                                 <option value="ON_TRACK">On Track</option>
@@ -146,7 +146,7 @@ export default function AdminProjects() {
                             <Spinner size="lg" />
                         </div>
                     ) : filteredProjects.length === 0 ? (
-                        <div className="bg-white p-12 text-center rounded-xl border-2 border-dashed border-gray-100 italic text-gray-400">
+                        <div className="bg-white dark:bg-gray-900 p-12 text-center rounded-xl border-2 border-dashed border-gray-100 dark:border-gray-800 italic text-gray-400">
                             No projects match your criteria.
                         </div>
                     ) : (
@@ -164,11 +164,11 @@ export default function AdminProjects() {
                                             </div>
                                             <Link
                                                 href={`/admin/projects/${p.id}`}
-                                                className="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors block mb-1"
+                                                className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 transition-colors block mb-1"
                                             >
                                                 {p.name}
                                             </Link>
-                                            <p className="text-sm text-gray-500 line-clamp-2 mb-4">
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">
                                                 {p.description || 'No description provided.'}
                                             </p>
                                         </div>
@@ -181,19 +181,19 @@ export default function AdminProjects() {
                                         </Link>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4 py-4 border-t border-gray-50">
-                                        <div className="flex items-center text-sm text-gray-600">
+                                    <div className="grid grid-cols-2 gap-4 py-4 border-t border-gray-50 dark:border-gray-800">
+                                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                                             <Calendar className="w-4 h-4 mr-2 text-gray-400" />
                                             Ends {new Date(p.endDate).toLocaleDateString()}
                                         </div>
-                                        <div className="flex items-center text-sm text-gray-600">
+                                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                                             <Users className="w-4 h-4 mr-2 text-gray-400" />
                                             {p.employees?.length || 0} Team Members
                                         </div>
                                     </div>
 
                                     {/* Health Bar */}
-                                    <div className="mt-2 h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                                    <div className="mt-2 h-1.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                                         <div
                                             className={`h-full transition-all duration-500 rounded-full ${p.healthScore >= 80 ? 'bg-green-500' : p.healthScore >= 60 ? 'bg-yellow-500' : 'bg-red-500'
                                                 }`}
@@ -216,51 +216,51 @@ export default function AdminProjects() {
                     <form onSubmit={handleCreateProject} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2 md:col-span-2">
-                                <label className="text-sm font-semibold text-gray-700">Project Name</label>
+                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Project Name</label>
                                 <input
                                     name="name"
                                     required
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                    className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                                     placeholder="e.g. Website Overhaul 2024"
                                 />
                             </div>
 
                             <div className="space-y-2 md:col-span-2">
-                                <label className="text-sm font-semibold text-gray-700">Description</label>
+                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Description</label>
                                 <textarea
                                     name="description"
                                     rows={3}
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
+                                    className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none"
                                     placeholder="Summarize the project goals..."
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Start Date</label>
+                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Start Date</label>
                                 <input
                                     type="date"
                                     name="startDate"
                                     required
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                    className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all [color-scheme:light] dark:[color-scheme:dark]"
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">End Date</label>
+                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">End Date</label>
                                 <input
                                     type="date"
                                     name="endDate"
                                     required
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                    className="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all [color-scheme:light] dark:[color-scheme:dark]"
                                 />
                             </div>
 
                             <div className="space-y-2 md:col-span-2">
-                                <label className="text-sm font-semibold text-gray-700">Client</label>
+                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Client</label>
                                 <select
                                     name="clientId"
                                     required
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white"
+                                    className="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                                 >
                                     <option value="">Select a client...</option>
                                     {clients.map(c => <option key={c.id} value={c.id}>{c.name} ({c.email})</option>)}
@@ -268,8 +268,8 @@ export default function AdminProjects() {
                             </div>
 
                             <div className="space-y-2 md:col-span-2">
-                                <label className="text-sm font-semibold text-gray-700">Assign Employees</label>
-                                <div className="max-h-48 overflow-y-auto p-4 border border-gray-200 rounded-xl space-y-3 bg-gray-50">
+                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Assign Employees</label>
+                                <div className="max-h-48 overflow-y-auto p-4 border border-gray-200 dark:border-gray-800 rounded-xl space-y-3 bg-gray-50 dark:bg-gray-900/50">
                                     {employees.length === 0 ? (
                                         <p className="text-xs text-gray-400 italic">No employees found.</p>
                                     ) : employees.map(e => (
@@ -278,9 +278,9 @@ export default function AdminProjects() {
                                                 type="checkbox"
                                                 name="employees"
                                                 value={e.id}
-                                                className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                                                className="w-4 h-4 text-indigo-600 rounded border-gray-300 dark:border-gray-700 focus:ring-indigo-500 bg-white dark:bg-gray-800"
                                             />
-                                            <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
+                                            <span className="text-sm text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
                                                 {e.name} <span className="text-gray-400 text-xs ml-1">— {e.email}</span>
                                             </span>
                                         </label>
@@ -293,14 +293,14 @@ export default function AdminProjects() {
                             <button
                                 type="button"
                                 onClick={() => setIsModalOpen(false)}
-                                className="px-6 py-2.5 text-sm font-bold text-gray-600 hover:text-gray-800 transition-colors"
+                                className="px-6 py-2.5 text-sm font-bold text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="px-8 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 shadow-md shadow-indigo-200"
+                                className="px-8 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 shadow-md shadow-indigo-200 dark:shadow-none"
                             >
                                 {submitting ? 'Creating...' : 'Create Project'}
                             </button>

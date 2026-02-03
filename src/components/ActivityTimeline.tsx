@@ -23,6 +23,7 @@ interface Activity {
 
 interface ActivityTimelineProps {
     projectId: string
+    activities?: Activity[]
 }
 
 const formatRelativeTime = (date: string | Date) => {
@@ -38,11 +39,13 @@ const formatRelativeTime = (date: string | Date) => {
     return `${Math.floor(diffInSeconds / 31536000)} years ago`
 }
 
-const ActivityTimeline: React.FC<ActivityTimelineProps> = ({ projectId }) => {
-    const [activities, setActivities] = useState<Activity[]>([])
-    const [loading, setLoading] = useState(true)
+const ActivityTimeline: React.FC<ActivityTimelineProps> = ({ projectId, activities: initialActivities }) => {
+    const [activities, setActivities] = useState<Activity[]>(initialActivities || [])
+    const [loading, setLoading] = useState(!initialActivities)
 
     useEffect(() => {
+        if (initialActivities) return
+
         const fetchActivities = async () => {
             try {
                 const res = await fetch(`/api/projects/${projectId}/activity`)
@@ -99,11 +102,11 @@ const ActivityTimeline: React.FC<ActivityTimelineProps> = ({ projectId }) => {
 
     if (activities.length === 0) {
         return (
-            <div className="py-12 text-center bg-white rounded-2xl border border-gray-100 shadow-sm">
-                <div className="bg-indigo-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="py-12 text-center bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm rounded-2xl">
+                <div className="bg-indigo-50 dark:bg-indigo-900/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Calendar className="w-8 h-8 text-indigo-400" />
                 </div>
-                <p className="text-gray-500 font-medium px-6">
+                <p className="text-gray-500 dark:text-gray-400 font-medium px-6 italic">
                     No activity yet. Check-ins, feedback, and risk updates will appear here.
                 </p>
             </div>
@@ -113,28 +116,28 @@ const ActivityTimeline: React.FC<ActivityTimelineProps> = ({ projectId }) => {
     return (
         <div className="relative">
             {/* Vertical line - 1px indigo-200 */}
-            <div className="absolute left-[4.5px] top-3 bottom-0 w-px bg-indigo-200" />
+            <div className="absolute left-[4.5px] top-3 bottom-0 w-px bg-indigo-200 dark:bg-indigo-900/50" />
 
             <div className="space-y-6">
                 {activities.map((activity, index) => (
                     <div key={activity.id} className="relative flex gap-4 md:gap-6 group">
                         {/* Timeline Dot - 10px circle, indigo-600 border, white fill */}
                         <div className="flex flex-col items-center pt-[11px] relative z-10">
-                            <div className="w-[10px] h-[10px] flex-shrink-0 rounded-full bg-white border-2 border-indigo-600 shadow-sm" />
+                            <div className="w-[10px] h-[10px] flex-shrink-0 rounded-full bg-white dark:bg-gray-950 border-2 border-indigo-600 shadow-sm" />
                         </div>
 
                         {/* Activity Card - alternating bg white/gray-50 */}
-                        <div className={`flex-1 border border-gray-200 rounded-lg p-4 shadow-sm transition-all hover:border-indigo-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                        <div className={`flex-1 border border-gray-200 dark:border-gray-800 rounded-lg p-4 shadow-sm transition-all hover:border-indigo-200 dark:hover:border-indigo-500/50 ${index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'
                             }`}>
                             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                                 <div className="flex items-start gap-3">
                                     <div className="mt-0.5 flex-shrink-0">{getIcon(activity.type)}</div>
                                     <div className="min-w-0">
-                                        <h4 className="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
+                                        <h4 className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-indigo-600 transition-colors uppercase tracking-tight">
                                             {activity.title}
                                         </h4>
                                         {activity.description && (
-                                            <p className="mt-1 text-xs text-gray-500 leading-relaxed">
+                                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-medium">
                                                 {activity.description}
                                             </p>
                                         )}

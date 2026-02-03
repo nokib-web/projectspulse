@@ -80,14 +80,14 @@ export default function ClientDashboard() {
 
                     {/* Critical Alerts */}
                     {criticalProjects.length > 0 && (
-                        <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-pulse">
+                        <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-900/40 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-pulse">
                             <div className="flex items-center space-x-4">
                                 <div className="p-3 bg-red-100 rounded-xl text-red-600">
                                     <AlertCircle className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h4 className="text-red-900 font-black text-lg">Attention Required</h4>
-                                    <p className="text-red-700 text-sm font-medium">{criticalProjects.length} project(s) are currently in critical health status.</p>
+                                    <h4 className="text-red-900 dark:text-red-200 font-black text-lg">Attention Required</h4>
+                                    <p className="text-red-700 dark:text-red-300 text-sm font-medium">{criticalProjects.length} project(s) are currently in critical health status.</p>
                                 </div>
                             </div>
                             <Link href="/client/projects" className="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold text-sm hover:bg-red-700 transition-all shadow-lg shadow-red-100">
@@ -101,7 +101,7 @@ export default function ClientDashboard() {
                         {/* Project Hub */}
                         <div className="lg:col-span-8 space-y-6">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-xl font-black text-gray-900 flex items-center uppercase tracking-tight">
+                                <h3 className="text-xl font-black text-gray-900 dark:text-white flex items-center uppercase tracking-tight">
                                     <Folder className="w-5 h-5 mr-3 text-indigo-500" /> Current Initiatives
                                 </h3>
                             </div>
@@ -111,7 +111,7 @@ export default function ClientDashboard() {
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {projects.map((p) => (
-                                        <Card key={p.id} className={`group hover:shadow-2xl transition-all duration-500 p-6 ${p.status === 'CRITICAL' ? 'border-red-100' : 'border-gray-50'}`}>
+                                        <Card key={p.id} className={`group hover:shadow-2xl transition-all duration-500 p-6 ${p.status === 'CRITICAL' ? 'border-red-100 dark:border-red-900/40' : 'border-gray-50 dark:border-gray-800'}`}>
                                             <div className="flex justify-between items-start mb-6">
                                                 <StatusBadge status={p.status} />
                                                 <div className="text-right">
@@ -121,16 +121,16 @@ export default function ClientDashboard() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <h4 className="text-lg font-black text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">{p.name}</h4>
-                                            <p className="text-sm text-gray-500 line-clamp-2 mb-6 font-medium leading-relaxed">
+                                            <h4 className="text-lg font-black text-gray-900 dark:text-white mb-2 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{p.name}</h4>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-6 font-medium leading-relaxed">
                                                 {p.description || "Active partnership project focus on delivery excellence."}
                                             </p>
 
-                                            <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
+                                            <div className="pt-6 border-t border-gray-50 dark:border-gray-800 flex items-center justify-between">
                                                 <div className="text-[10px] font-black text-gray-400 uppercase">
-                                                    Last Feedback: <span className="text-gray-900">{p.feedback?.[0] ? new Date(p.feedback[0].createdAt).toLocaleDateString() : 'None'}</span>
+                                                    Last Feedback: <span className="text-gray-900 dark:text-white">{p.feedback?.[0] ? new Date(p.feedback[0].createdAt).toLocaleDateString() : 'None'}</span>
                                                 </div>
-                                                <Link href={`/client/projects/${p.id}`} className="p-2 bg-gray-50 rounded-lg text-gray-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-all">
+                                                <Link href={`/client/projects/${p.id}`} className="p-2 bg-gray-50 dark:bg-gray-800 rounded-lg text-gray-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-all">
                                                     <ChevronRight className="w-5 h-5" />
                                                 </Link>
                                             </div>
@@ -143,21 +143,21 @@ export default function ClientDashboard() {
                         {/* Quick Actions / Highlights */}
                         <div className="lg:col-span-4 space-y-8">
 
-                            <Card title="Quick Stats" className="bg-gray-50 border-gray-100">
+                            <Card title="Quick Stats" className="bg-gray-50 dark:bg-gray-900 border-gray-100 dark:border-gray-800">
                                 <div className="space-y-6">
                                     <div className="flex justify-between items-center">
                                         <div className="flex items-center space-x-3">
                                             <TrendingUp className="w-5 h-5 text-green-500" />
-                                            <span className="text-sm font-bold text-gray-600">Active Phase</span>
+                                            <span className="text-sm font-bold text-gray-600 dark:text-gray-300">Active Phase</span>
                                         </div>
-                                        <span className="font-black text-indigo-600">{projects.length}</span>
+                                        <span className="font-black text-indigo-600 dark:text-indigo-400">{projects.length}</span>
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <div className="flex items-center space-x-3">
                                             <MessageCircle className="w-5 h-5 text-indigo-500" />
-                                            <span className="text-sm font-bold text-gray-600">Feedback Logs</span>
+                                            <span className="text-sm font-bold text-gray-600 dark:text-gray-300">Feedback Logs</span>
                                         </div>
-                                        <span className="font-black text-indigo-600">{projects.reduce((s, p) => s + (p.feedback?.length || 0), 0)}</span>
+                                        <span className="font-black text-indigo-600 dark:text-indigo-400">{projects.reduce((s, p) => s + (p.feedback?.length || 0), 0)}</span>
                                     </div>
                                 </div>
                             </Card>

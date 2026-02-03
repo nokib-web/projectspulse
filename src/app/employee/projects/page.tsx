@@ -52,33 +52,33 @@ export default function EmployeeProjects() {
                                     <div className="flex-1">
                                         <div className="flex items-center justify-between mb-4">
                                             <StatusBadge status={p.status} />
-                                            <div className="flex items-center text-[10px] font-black text-gray-400 bg-gray-50 px-2 py-1 rounded-md uppercase tracking-wider">
+                                            <div className="flex items-center text-[10px] font-black text-gray-400 bg-gray-50 dark:bg-gray-800 px-2 py-1 rounded-md uppercase tracking-wider">
                                                 ID: {p.id.substring(0, 6)}
                                             </div>
                                         </div>
 
-                                        <h3 className="text-xl font-black text-gray-900 mb-2 truncate group-hover:text-indigo-600 transition-colors">
+                                        <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                             {p.name}
                                         </h3>
-                                        <p className="text-sm text-gray-500 line-clamp-2 mb-6 leading-relaxed">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-6 leading-relaxed">
                                             {p.description || "No description provided for this assignment."}
                                         </p>
 
                                         <div className="space-y-3 mb-6">
-                                            <div className="flex items-center text-xs font-semibold text-gray-600">
+                                            <div className="flex items-center text-xs font-semibold text-gray-600 dark:text-gray-300">
                                                 <User className="w-4 h-4 mr-3 text-indigo-400" />
-                                                <span className="text-gray-400 mr-2">Client:</span> {p.client?.name}
+                                                <span className="text-gray-400 dark:text-gray-500 mr-2">Client:</span> {p.client?.name}
                                             </div>
-                                            <div className="flex items-center text-xs font-semibold text-gray-600">
+                                            <div className="flex items-center text-xs font-semibold text-gray-600 dark:text-gray-300">
                                                 <Calendar className="w-4 h-4 mr-3 text-indigo-400" />
-                                                <span className="text-gray-400 mr-2">Ends:</span> {new Date(p.endDate).toLocaleDateString()}
+                                                <span className="text-gray-400 dark:text-gray-500 mr-2">Ends:</span> {new Date(p.endDate).toLocaleDateString()}
                                             </div>
                                         </div>
                                     </div>
 
                                     <Link
                                         href={`/employee/projects/${p.id}`}
-                                        className="mt-4 flex items-center justify-center py-3 bg-gray-950 text-white rounded-xl font-bold text-sm hover:bg-indigo-600 transition-all shadow-lg shadow-gray-200"
+                                        className="mt-4 flex items-center justify-center py-3 bg-gray-950 dark:bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-600 dark:hover:bg-indigo-700 transition-all shadow-lg shadow-gray-200 dark:shadow-none"
                                     >
                                         View Dashboard <ChevronRight className="w-4 h-4 ml-2" />
                                     </Link>

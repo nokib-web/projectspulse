@@ -4,7 +4,7 @@ import prisma from '@/lib/db'
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { projectId: string } }
+    context: { params: Promise<{ projectId: string }> }
 ) {
     const authUser = await getAuthenticatedUser(req)
     if (!authUser) {
@@ -16,7 +16,7 @@ export async function GET(
     }
 
     try {
-        const { projectId } = params
+        const { projectId } = await context.params
         const { searchParams } = new URL(req.url)
         const type = searchParams.get('type')
 
@@ -36,7 +36,7 @@ export async function GET(
             authUser.role === 'ADMIN' ||
             project.adminId === authUser.id ||
             project.clientId === authUser.id ||
-            project.employees.some(pe => pe.employeeId === authUser.id)
+            project.employees.some((pe: any) => pe.employeeId === authUser.id)
 
         if (!hasAccess) {
             return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 })
