@@ -5,7 +5,7 @@ import { recalcHealthScore } from '@/lib/healthScore'
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { projectId: string } }
+    context: { params: Promise<{ projectId: string }> }
 ) {
     const authUser = await getAuthenticatedUser(req)
     if (!authUser) {
@@ -17,7 +17,7 @@ export async function GET(
     }
 
     try {
-        const { projectId } = params
+        const { projectId } = await context.params
         const { searchParams } = new URL(req.url)
         const status = searchParams.get('status')
         const severity = searchParams.get('severity')
@@ -68,7 +68,7 @@ export async function GET(
 
 export async function POST(
     req: NextRequest,
-    { params }: { params: { projectId: string } }
+    context: { params: Promise<{ projectId: string }> }
 ) {
     const authUser = await getAuthenticatedUser(req)
     if (!authUser) {
@@ -85,7 +85,7 @@ export async function POST(
     }
 
     try {
-        const { projectId } = params
+        const { projectId } = await context.params
         const body = await req.json()
         const { title, description, severity, mitigationPlan, status } = body
 

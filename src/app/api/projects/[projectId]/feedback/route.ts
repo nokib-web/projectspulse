@@ -147,8 +147,8 @@ export async function POST(
                 year,
                 satisfactionRating,
                 communicationClarity,
-                comments,
-                flaggedIssue: flaggedIssue || false
+                comments: comments || null,
+                flaggedIssue: !!flaggedIssue
             },
             include: {
                 client: {
@@ -157,8 +157,8 @@ export async function POST(
             }
         })
 
-        // Log activity
-        await prisma.activityLog.create({
+        // Log activity (fire and forget / handled)
+        prisma.activityLog.create({
             data: {
                 projectId,
                 userId: authUser.id,
@@ -166,11 +166,11 @@ export async function POST(
                 title: 'Client feedback submitted',
                 description: `Satisfaction: ${satisfactionRating}/5, Communication: ${communicationClarity}/5`
             }
-        })
+        }).catch((e: any) => console.error('Activity log creation failed:', e))
 
-        // Create notification if issue flagged
+        // Create notification if issue flagged (fire and forget / handled)
         if (flaggedIssue && project.adminId) {
-            await prisma.notification.create({
+            prisma.notification.create({
                 data: {
                     userId: project.adminId,
                     title: 'Issue Flagged',
@@ -178,15 +178,15 @@ export async function POST(
                     type: 'ISSUE_FLAGGED',
                     link: `/admin/projects/${projectId}`
                 }
-            })
+            }).catch((e: any) => console.error('Notification creation failed:', e))
         }
 
         // Recalculate health score
         await recalcHealthScore(projectId)
 
         return NextResponse.json({ success: true, data: feedback }, { status: 201 })
-    } catch (error) {
+    } catch (error: any) {
         console.error('Create feedback error:', error)
-        return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 })
+        return NextResponse.json({ success: false, error: 'Internal server error', details: error.message }, { status: 500 })
     }
 }

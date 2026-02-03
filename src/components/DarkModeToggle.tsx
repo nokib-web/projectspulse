@@ -14,18 +14,12 @@ const DarkModeContext = createContext<DarkModeContextType | undefined>(undefined
 
 export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [theme, setTheme] = useState<Theme>('light')
+    const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
-        const savedTheme = localStorage.getItem('theme') as Theme
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        const initialTheme = savedTheme || systemTheme
-
-        setTheme(initialTheme)
-        if (initialTheme === 'dark') {
-            document.documentElement.classList.add('dark')
-        } else {
-            document.documentElement.classList.remove('dark')
-        }
+        setMounted(true)
+        const isDark = document.documentElement.classList.contains('dark')
+        setTheme(isDark ? 'dark' : 'light')
     }, [])
 
     const toggleTheme = () => {
@@ -35,11 +29,16 @@ export const DarkModeProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
         if (newTheme === 'dark') {
             document.documentElement.classList.add('dark')
+            document.documentElement.classList.remove('light')
         } else {
             document.documentElement.classList.remove('dark')
+            document.documentElement.classList.add('light')
         }
     }
 
+    // Prevent hydration mismatch: only render children after mounted
+    // We wrapped provider around toast and auth, so we should actually render children
+    // but the VALUE will be correct after mount.
     return (
         <DarkModeContext.Provider value={{ theme, toggleTheme }}>
             {children}
@@ -57,6 +56,15 @@ export const useDarkMode = () => {
 
 export const DarkModeToggle: React.FC = () => {
     const { theme, toggleTheme } = useDarkMode()
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!mounted) {
+        return <div className="p-2 w-9 h-9" /> // Skeleton/Placeholder
+    }
 
     return (
         <button

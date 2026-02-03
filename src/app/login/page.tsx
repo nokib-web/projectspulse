@@ -32,19 +32,46 @@ export default function LoginPage() {
         }
     }, [user, router])
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+    const handleLogin = async (e: string, p: string) => {
         setError('')
         setIsLoading(true)
 
         try {
-            await login(email, password)
-            // Redirect will happen via useEffect above
+            await login(e, p)
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Login failed. Please try again.')
         } finally {
             setIsLoading(false)
         }
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        await handleLogin(email, password)
+    }
+
+    const handleDemoLogin = (role: 'ADMIN' | 'EMPLOYEE' | 'CLIENT') => {
+        let demoEmail = ''
+        let demoPassword = ''
+
+        switch (role) {
+            case 'ADMIN':
+                demoEmail = 'admin@projectpulse.io'
+                demoPassword = 'Admin123!'
+                break
+            case 'EMPLOYEE':
+                demoEmail = 'sarah@projectpulse.io'
+                demoPassword = 'Employee123!'
+                break
+            case 'CLIENT':
+                demoEmail = 'olivia@projectpulse.io'
+                demoPassword = 'Client123!'
+                break
+        }
+
+        setEmail(demoEmail)
+        setPassword(demoPassword)
+        handleLogin(demoEmail, demoPassword)
     }
 
     return (
@@ -108,6 +135,32 @@ export default function LoginPage() {
                             )}
                         </button>
                     </form>
+
+                    <div className="mt-8 pt-6 border-t border-white/10">
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 text-center">
+                            Demo Access
+                        </p>
+                        <div className="grid grid-cols-3 gap-3">
+                            <button
+                                onClick={() => handleDemoLogin('ADMIN')}
+                                className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-gray-300 transition-colors"
+                            >
+                                Admin
+                            </button>
+                            <button
+                                onClick={() => handleDemoLogin('EMPLOYEE')}
+                                className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-gray-300 transition-colors"
+                            >
+                                Employee
+                            </button>
+                            <button
+                                onClick={() => handleDemoLogin('CLIENT')}
+                                className="px-3 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-gray-300 transition-colors"
+                            >
+                                Client
+                            </button>
+                        </div>
+                    </div>
 
                     <p className="text-center text-gray-400 text-sm mt-6">
                         Accounts are created by administrators.

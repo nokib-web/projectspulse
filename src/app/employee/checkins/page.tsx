@@ -90,12 +90,12 @@ export default function EmployeeCheckins() {
                 <div className="space-y-8 max-w-5xl mx-auto">
 
                     <div className="flex items-center space-x-4 mb-4">
-                        <div className="p-3 bg-indigo-100 rounded-2xl">
-                            <CheckSquare className="w-6 h-6 text-indigo-600" />
+                        <div className="p-3 bg-indigo-100 dark:bg-indigo-900/40 rounded-2xl">
+                            <CheckSquare className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-gray-900">Check-in Registry</h2>
-                            <p className="text-sm text-gray-500 font-medium">Keep your team synced with your individual milestones.</p>
+                            <h2 className="text-xl font-black text-gray-900 dark:text-white">Check-in Registry</h2>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Keep your team synced with your individual milestones.</p>
                         </div>
                     </div>
 
@@ -110,11 +110,11 @@ export default function EmployeeCheckins() {
                                 const lastCheckin = p.checkins?.filter((c: any) => c.employeeId === user?.id).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
 
                                 return (
-                                    <Card key={p.id} className={`transition-all duration-300 ${isPending ? 'border-amber-200 bg-amber-50/10' : 'border-gray-50'}`}>
+                                    <Card key={p.id} className={`transition-all duration-300 ${isPending ? 'border-amber-200 dark:border-amber-900/50 bg-amber-50/10 dark:bg-amber-900/10' : 'border-gray-50 dark:border-gray-800'}`}>
                                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                             <div className="flex-1">
                                                 <div className="flex items-center space-x-3 mb-2">
-                                                    <h3 className="text-lg font-black text-gray-900">{p.name}</h3>
+                                                    <h3 className="text-lg font-black text-gray-900 dark:text-white">{p.name}</h3>
                                                     {isPending ? (
                                                         <Badge variant="warning">SUBMISSION DUE</Badge>
                                                     ) : (
@@ -122,19 +122,19 @@ export default function EmployeeCheckins() {
                                                     )}
                                                 </div>
                                                 {lastCheckin ? (
-                                                    <p className="text-xs text-gray-500 font-semibold italic">
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold italic">
                                                         Last updated: {new Date(lastCheckin.createdAt).toLocaleDateString()} — "{lastCheckin.progressSummary.substring(0, 60)}..."
                                                     </p>
                                                 ) : (
-                                                    <p className="text-xs text-gray-400 font-medium italic">No updates logged yet.</p>
+                                                    <p className="text-xs text-gray-400 dark:text-gray-500 font-medium italic">No updates logged yet.</p>
                                                 )}
                                             </div>
 
                                             <button
                                                 onClick={() => openModalFor(p.id)}
                                                 className={`inline-flex items-center px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-lg ${isPending
-                                                        ? 'bg-amber-500 text-white hover:bg-amber-600 shadow-amber-100'
-                                                        : 'bg-white text-gray-600 border border-gray-100 hover:bg-gray-50 shadow-gray-100'
+                                                    ? 'bg-amber-500 text-white hover:bg-amber-600 shadow-amber-100 dark:shadow-none'
+                                                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750 shadow-gray-100 dark:shadow-none'
                                                     }`}
                                             >
                                                 <Plus className="w-4 h-4 mr-2" />
@@ -162,7 +162,7 @@ export default function EmployeeCheckins() {
                                 name="progressSummary"
                                 required
                                 rows={3}
-                                className="w-full px-4 py-3 border border-gray-200 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-50 focus:border-indigo-500 transition-all resize-none shadow-sm font-medium text-sm leading-relaxed"
+                                className="w-full px-4 py-3 border border-gray-200 dark:border-gray-800 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-900/20 focus:border-indigo-500 transition-all resize-none shadow-sm font-medium text-sm leading-relaxed bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                 placeholder="What did you achieve this week?"
                             />
                         </div>
@@ -180,9 +180,9 @@ export default function EmployeeCheckins() {
                                     max="100"
                                     value={progressValue}
                                     onChange={(e) => setProgressValue(parseInt(e.target.value))}
-                                    className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                                    className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                                 />
-                                <div className="h-4 bg-gray-50 rounded-full overflow-hidden border border-gray-100">
+                                <div className="h-4 bg-gray-50 dark:bg-gray-900 rounded-full overflow-hidden border border-gray-100 dark:border-gray-800">
                                     <div
                                         className="h-full bg-gradient-to-r from-indigo-400 to-indigo-600 transition-all duration-500"
                                         style={{ width: `${progressValue}%` }}
@@ -198,7 +198,7 @@ export default function EmployeeCheckins() {
                                     {[1, 2, 3, 4, 5].map((level) => (
                                         <label key={level} className="flex-1 cursor-pointer group">
                                             <input type="radio" name="confidenceLevel" value={level} className="sr-only peer" defaultChecked={level === 3} />
-                                            <div className="py-2.5 text-center rounded-xl bg-gray-50 text-gray-400 font-black text-lg peer-checked:bg-indigo-600 peer-checked:text-white group-hover:bg-indigo-50 transition-all border border-transparent peer-checked:border-indigo-700 shadow-sm">
+                                            <div className="py-2.5 text-center rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500 font-black text-lg peer-checked:bg-indigo-600 peer-checked:text-white group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30 transition-all border border-transparent peer-checked:border-indigo-700 dark:peer-checked:border-indigo-500 shadow-sm">
                                                 {level}
                                             </div>
                                         </label>
@@ -218,7 +218,7 @@ export default function EmployeeCheckins() {
                                 <textarea
                                     name="blockers"
                                     rows={3}
-                                    className="w-full px-4 py-3 border border-gray-200 rounded-2xl outline-none focus:ring-4 focus:ring-amber-50 focus:border-amber-400 transition-all resize-none shadow-sm text-sm"
+                                    className="w-full px-4 py-3 border border-gray-200 dark:border-gray-800 rounded-2xl outline-none focus:ring-4 focus:ring-amber-50 dark:focus:ring-amber-900/20 focus:border-amber-400 transition-all resize-none shadow-sm text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                                     placeholder="Anything slowing you down? (Optional)"
                                 />
                             </div>
@@ -227,7 +227,7 @@ export default function EmployeeCheckins() {
                         <button
                             type="submit"
                             disabled={submitting}
-                            className="w-full py-4 bg-gray-950 text-white font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-indigo-700 hover:shadow-2xl hover:shadow-indigo-200 transition-all disabled:opacity-50"
+                            className="w-full py-4 bg-gray-950 dark:bg-indigo-600 text-white font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-indigo-700 dark:hover:bg-indigo-700 hover:shadow-2xl hover:shadow-indigo-200 dark:hover:shadow-none transition-all disabled:opacity-50"
                         >
                             {submitting ? 'Submitting...' : 'Log Weekly Update'}
                         </button>

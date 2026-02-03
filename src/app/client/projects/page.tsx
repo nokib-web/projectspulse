@@ -35,12 +35,12 @@ export default function ClientProjects() {
         <ProtectedRoute allowedRoles={['CLIENT']}>
             <AppLayout links={CLIENT_LINKS} title="My Projects">
                 <div className="space-y-6 max-w-6xl mx-auto">
-                    <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-6">
+                    <div className="flex items-center justify-between mb-8 border-b border-gray-100 dark:border-gray-800 pb-6">
                         <div>
-                            <h2 className="text-2xl font-black text-gray-900 tracking-tight">Active Portfolio</h2>
-                            <p className="text-sm text-gray-500 font-medium">Tracking {projects.length} collaborative initiatives.</p>
+                            <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Active Portfolio</h2>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Tracking {projects.length} collaborative initiatives.</p>
                         </div>
-                        <Folder className="w-10 h-10 text-indigo-100" />
+                        <Folder className="w-10 h-10 text-indigo-100 dark:text-indigo-900/30" />
                     </div>
 
                     {loading ? (
@@ -62,17 +62,17 @@ export default function ClientProjects() {
                                         <div className="relative z-10 p-2">
                                             <div className="flex items-center justify-between mb-6">
                                                 <StatusBadge status={p.status} />
-                                                <div className="flex items-center space-x-1 text-[10px] font-black text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md uppercase tracking-widest">
+                                                <div className="flex items-center space-x-1 text-[10px] font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/40 px-2 py-1 rounded-md uppercase tracking-widest">
                                                     Health: {p.healthScore}%
                                                 </div>
                                             </div>
 
-                                            <h3 className="text-xl font-black text-gray-900 mb-2 leading-tight group-hover:text-indigo-600 transition-colors">{p.name}</h3>
-                                            <p className="text-sm text-gray-500 font-medium line-clamp-2 mb-8 leading-relaxed">
+                                            <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2 leading-tight group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{p.name}</h3>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium line-clamp-2 mb-8 leading-relaxed">
                                                 {p.description || "Partnering to deliver excellence and business value."}
                                             </p>
 
-                                            <div className="flex items-center justify-between pt-6 border-t border-gray-50">
+                                            <div className="flex items-center justify-between pt-6 border-t border-gray-50 dark:border-gray-800">
                                                 <div className="flex items-center space-x-6">
                                                     <div className="flex items-center text-xs font-bold text-gray-400">
                                                         <Calendar className="w-4 h-4 mr-2" />

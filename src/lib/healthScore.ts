@@ -95,7 +95,10 @@ export async function recalcHealthScore(projectId: string): Promise<number> {
 
             // If actual >= expected, score is 100
             // If behind, subtract the difference (clamped to 0-100)
-            progressScore = 100 - Math.max(0, Math.min(100, difference))
+            const calculatedProgressScore = 100 - Math.max(0, Math.min(100, difference))
+            if (!isNaN(calculatedProgressScore)) {
+                progressScore = calculatedProgressScore
+            }
         }
 
         // ============================================
@@ -127,46 +130,48 @@ export async function recalcHealthScore(projectId: string): Promise<number> {
         // Clamp to minimum 0
         riskScore = Math.max(0, riskScore)
 
-        // ============================================
-        // FINAL SCORE CALCULATION
-        // ============================================
-        const finalScore = Math.round(
+        // finalScore calculation
+        let finalScore = Math.round(
             (clientSatisfactionScore * 0.30) +
             (employeeConfidenceScore * 0.25) +
             (progressScore * 0.25) +
             (riskScore * 0.20)
         )
 
+        // Fallback if NaN
+        if (isNaN(finalScore)) {
+            console.error(`Health score calculation resulted in NaN for project ${projectId}. Components:`, {
+                clientSatisfactionScore,
+                employeeConfidenceScore,
+                progressScore,
+                riskScore
+            })
+            finalScore = 100
+        }
+
         // Determine status from score
         const newStatus = getStatusLabel(finalScore)
         const currentStatus = project.status
 
-        // Update project with new health score
-        await prisma.project.update({
-            where: { id: projectId },
-            data: { healthScore: finalScore }
-        })
+        const updateData: any = { healthScore: finalScore }
 
         // If status changed, update and notify
         if (newStatus !== currentStatus && currentStatus !== 'COMPLETED') {
-            await prisma.project.update({
-                where: { id: projectId },
-                data: { status: newStatus }
-            })
+            updateData.status = newStatus
 
-            // Log activity
-            await prisma.activityLog.create({
+            // Log activity (fire and forget / handled)
+            prisma.activityLog.create({
                 data: {
                     projectId,
-                    userId: project.adminId, // System-generated change credited to admin
+                    userId: project.adminId,
                     type: 'PROJECT_STATUS_CHANGED',
                     title: `Status changed to ${newStatus}`,
                     description: `Health score: ${finalScore}. Status automatically updated from ${currentStatus} to ${newStatus}.`
                 }
-            })
+            }).catch((e: any) => console.error('Failed to create status change activity log:', e))
 
-            // Notify admin
-            await prisma.notification.create({
+            // Notify admin (fire and forget / handled)
+            prisma.notification.create({
                 data: {
                     userId: project.adminId,
                     title: 'Project Status Changed',
@@ -174,8 +179,14 @@ export async function recalcHealthScore(projectId: string): Promise<number> {
                     type: 'STATUS_CHANGE',
                     link: `/admin/projects/${projectId}`
                 }
-            })
+            }).catch((e: any) => console.error('Failed to create status change notification:', e))
         }
+
+        // Final single update call
+        await prisma.project.update({
+            where: { id: projectId },
+            data: updateData
+        })
 
         return finalScore
     } catch (error) {
